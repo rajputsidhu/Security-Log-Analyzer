@@ -1,151 +1,197 @@
-# 🔍 Log Analyzer — SSH Brute Force Detection Tool
+# 🔍 Security Log Analyzer — SSH Brute Force Detection Tool
 
-A professional security tool that analyzes Linux SSH log files, detects brute force attacks, and generates detailed reports in multiple formats.
+A Python-based cybersecurity tool that analyzes Linux SSH authentication logs, detects suspicious login activities, identifies potential brute-force attacks, and generates structured security reports.
 
-Built with Python — designed to look and work like a real security analyst tool.
-
----
+Built to demonstrate practical cybersecurity concepts, log analysis, threat detection, and Python automation.
 
 ## 🚀 Features
 
-- Parses real Linux SSH auth.log files
-- Detects brute force attacks by grouping failed logins per IP
-- Identifies which usernames are being targeted most
-- Displays beautiful colored terminal output using Rich
-- Exports results to CSV, HTML, and JSON formats
-- Supports command line arguments for flexibility
-- Handles large log files efficiently by reading line by line
-
----
+- **SSH Log Parsing:** Reads and processes Linux authentication log files (`auth.log`).
+- **Brute Force Detection:** Identifies suspicious IP addresses based on repeated failed login attempts.
+- **IP-Based Analysis:** Groups failed login attempts and highlights potentially malicious sources.
+- **Targeted Username Detection:** Identifies usernames frequently targeted during login attempts.
+- **Terminal Reporting:** Displays security analysis results in a structured terminal interface.
+- **Report Generation:** Exports analysis results into CSV, HTML, and JSON formats.
+- **Custom Threshold:** Allows users to configure the number of failed attempts required to flag suspicious activity.
+- **Efficient Processing:** Processes log files line by line for better memory efficiency.
 
 ## 📁 Project Structure
-```
-log-analyzer/
-├── main.py                    # Entry point — connects everything
-├── generate_test_logs.py      # Generates fake logs for testing
-├── parsers/
-│   ├── __init__.py
-│   └── ssh_parser.py          # Reads and parses auth.log with regex
+
+```text
+Security-Log-Analyzer/
+│
 ├── analyzers/
 │   ├── __init__.py
-│   └── brute_force.py         # Detects suspicious IPs using pandas
+│   └── brute_force.py
+│
+├── parsers/
+│   ├── __init__.py
+│   └── ssh_parser.py
+│
 ├── reporters/
 │   ├── __init__.py
-│   ├── report.py              # Beautiful terminal output using Rich
-│   └── export.py              # CSV and HTML export
+│   ├── report.py
+│   └── export.py
+│
 ├── sample_logs/
-│   └── auth.log               # Sample or real log file
-├── reports/                   # Generated report files land here
-└── requirements.txt
+│   └── auth.log
+│
+├── reports/
+│
+├── .gitignore
+├── main.py
+├── generate_test_logs.py
+├── requirements.txt
+└── README.md
 ```
-
----
 
 ## ⚙️ Installation
 
-**1. Clone the repository:**
+**1. Clone the repository**
+
 ```bash
-git clone https://github.com/yourusername/log-analyzer.git
-cd log-analyzer
+git clone https://github.com/rajputsidhu/Security-Log-Analyzer.git
+cd Security-Log-Analyzer
 ```
 
-**2. Create and activate virtual environment:**
+**2. Create a virtual environment**
+
 ```bash
 python3 -m venv venv
+```
+
+**3. Activate the virtual environment**
+
+macOS / Linux:
+
+```bash
 source venv/bin/activate
 ```
 
-**3. Install dependencies:**
+Windows:
+
+```bash
+venv\Scripts\activate
+```
+
+**4. Install dependencies**
+
 ```bash
 pip install -r requirements.txt
 ```
 
----
-
 ## 🖥️ Usage
 
-**Basic usage:**
+**Basic log analysis**
+
 ```bash
 python main.py --log sample_logs/auth.log --threshold 5
 ```
 
-**With export to JSON:**
+**Analyze logs with a custom threshold**
+
+```bash
+python main.py --log sample_logs/auth.log --threshold 10
+```
+
+**Generate reports**
+
 ```bash
 python main.py --log sample_logs/auth.log --threshold 5 --export
 ```
 
-**Generate fake test logs:**
+**Generate sample test logs**
+
 ```bash
 python generate_test_logs.py
+```
+
+Then analyze the generated logs:
+
+```bash
 python main.py --log sample_logs/auth.log --threshold 5 --export
 ```
 
-**On a real Linux server:**
-```bash
-sudo cp /var/log/auth.log sample_logs/auth.log
-sudo chmod 644 sample_logs/auth.log
-python main.py --log sample_logs/auth.log --threshold 10 --export
-```
+**View available command-line options**
 
-**See all options:**
 ```bash
 python main.py --help
 ```
 
----
+## 🔧 Command-Line Arguments
 
-## 🔧 Command Line Arguments
+| Argument | Description |
+|---|---|
+| `--log` | Path to the SSH authentication log file |
+| `--threshold` | Minimum failed login attempts required to flag an IP address |
+| `--export` | Enables report export |
 
-| Argument | Required | Default | Description |
-|----------|----------|---------|-------------|
-| `--log` | Yes | None | Path to the log file to analyze |
-| `--threshold` | No | 5 | Failed attempts before flagging an IP |
-| `--export` | No | False | Export findings to JSON file |
+## 📊 Report Formats
 
----
+The tool supports multiple report formats for security analysis:
 
-## 📊 Output Formats
+| Format | Output | Purpose |
+|---|---|---|
+| Terminal | Console output | Quick security analysis |
+| CSV | Reports directory | Data analysis and investigation |
+| HTML | Reports directory | Browser-based report viewing |
+| JSON | `report.json` | Structured security data |
 
-| Format | Location | Use Case |
-|--------|----------|----------|
-| Terminal | Your screen | Quick analysis |
-| CSV | `reports/ssh_report_*.csv` | Open in Excel or Google Sheets |
-| HTML | `reports/ssh_report_*.html` | Open in browser, share with team |
-| JSON | `report.json` | Feed into other tools or dashboards |
+## ⚙️ How It Works
 
----
+**1. Log Parsing**
 
-## 🛠️ How It Works
+The parser reads SSH authentication logs and extracts relevant information such as timestamps, usernames, IP addresses, and login activity.
 
-**1. Parsing** — `ssh_parser.py` reads the log file line by line and uses regex to extract timestamp, username, IP address, and port number
+**2. Security Analysis**
 
-**2. Analysis** — `brute_force.py` uses pandas to group failed logins by IP, count attempts, flag IPs above threshold, and find targeted usernames
+The analyzer groups failed login attempts by IP address, identifies suspicious activity based on the configured threshold, and determines frequently targeted usernames.
 
-**3. Reporting** — `report.py` uses Rich library to display a summary panel, color-coded brute force table, and most targeted usernames
+**3. Threat Detection**
 
-**4. Export** — `export.py` saves results to CSV, HTML, and JSON formats
+IP addresses exceeding the configured failed-login threshold are flagged for further investigation.
 
----
+**4. Report Generation**
 
-## 📚 Libraries Used
+The reporting module displays analysis results and generates structured CSV, HTML, and JSON reports.
 
-| Library | Purpose |
-|---------|---------|
-| `rich` | Beautiful terminal output — tables, panels, colors |
-| `pandas` | Data analysis — grouping, counting, filtering |
-| `requests` | HTTP requests for future GeoIP lookup |
-| `tabulate` | Alternative table formatting |
-| `colorama` | Cross-platform terminal colors |
+## 🛠️ Technology Stack
 
----
+| Technology | Purpose |
+|---|---|
+| Python | Core development |
+| Regular Expressions | Log parsing |
+| Pandas | Data analysis and aggregation |
+| Rich | Terminal reporting |
+| CSV | Structured report export |
+| HTML | Browser-based reports |
+| JSON | Structured data export |
+| Git & GitHub | Version control |
+
+## 🔐 Cybersecurity Concepts Demonstrated
+
+- Linux system log analysis
+- SSH authentication monitoring
+- Brute-force attack detection
+- Failed login investigation
+- IP address-based threat identification
+- Security event analysis
+- Automated security reporting
 
 ## 👨‍💻 Author
 
-Built by Kenil as a cybersecurity portfolio project.
-Designed to demonstrate real security tooling skills using Python.
+**Sidhu Kumar Singh**
 
----
+B.Tech Computer Science Engineering  
+Cybersecurity Enthusiast | Python Developer
+
+- GitHub: https://github.com/rajputsidhu
+- LinkedIn: https://linkedin.com/in/sidhusingh
 
 ## 📄 License
 
-MIT License — free to use, modify, and distribute.
+This project is licensed under the MIT License.
+
+---
+
+⭐ If you find this project useful, consider giving it a star!
